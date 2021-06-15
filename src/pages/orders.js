@@ -21,9 +21,17 @@ function Orders({ orders }) {
         )}
 
         <div className="mt-5 space-y-4">
-          {orders.map(
+          {orders?.map(
             ({ id, amount, amountShipping, items, timestamp, images }) => (
-              <Order />
+              <Order
+                key={id}
+                id={id}
+                amount={amount}
+                amountShipping={amountShipping}
+                items={items}
+                timestamp={timestamp}
+                images={images}
+              />
             )
           )}
         </div>
@@ -62,10 +70,10 @@ export async function getServerSideProps(context) {
       amountShipping: order.data().amount_shipping,
       images: order.data().images,
       timestamp: moment(order.data().timestamp.toDate()).unix(),
-      items: ( 
-          await stripe.checkout.sessions.listLineItems(order.id, {
-        limit: 100,
-      })
+      items: (
+        await stripe.checkout.sessions.listLineItems(order.id, {
+          limit: 100,
+        })
       ).data,
     }))
   );
